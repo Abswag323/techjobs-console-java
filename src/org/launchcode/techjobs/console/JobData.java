@@ -7,7 +7,9 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -74,12 +76,28 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String[] columnsArray = new String[row.keySet().size()];
+            row.keySet().toArray(columnsArray);
 
-            if (aValue.contains(value)) {
-                jobs.add(row);
+            for (int i = 0; i < columnsArray.length; i++) {
+
+                String aColumn = columnsArray[i].toLowerCase();
+
+                if (aColumn.contains(column.toLowerCase())) {
+
+                    String aValue = row.get(column);
+                    if (aValue.toLowerCase().contains(value.toLowerCase())) {
+                        jobs.add(row);
+                    }
+                }
             }
-        }
+
+//            String aValue = row.get(column);
+//
+//            if (aValue.contains(value)) {
+//                jobs.add(row);
+//            }
+       }
 
         return jobs;
     }
@@ -125,4 +143,29 @@ public class JobData {
         }
     }
 
-}
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+
+        // load data, if not already loaded
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs) {
+
+            String[] valuesArray = new String[row.values().size()];
+            row.values().toArray(valuesArray);
+
+            for (int i = 0; i < valuesArray.length; i++) {
+
+                if (valuesArray[i].toLowerCase().contains(value.toLowerCase())) {
+                    if (!jobs.contains(row)) {
+                        jobs.add(row);
+                    }
+                }
+            }
+
+        }
+        return jobs;
+    }
+
+    }
